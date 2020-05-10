@@ -19,10 +19,6 @@
 
 import uuid
 
-import empower.workers
-
-from empower_core.walkmodule import walk_module
-
 from empower_core.service import EService
 from empower_core.envmanager.env import Env
 from empower_core.envmanager.workercallbackshandler import \
@@ -57,7 +53,7 @@ class EnvManager(EService):
     def catalog(self):
         """Return available workers."""
 
-        return walk_module(empower.workers)
+        return dict()
 
 
 def launch(context, service_id):

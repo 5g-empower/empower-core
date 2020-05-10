@@ -32,7 +32,7 @@ from pymodm.errors import ValidationError
 
 from empower_core.serialize import serialize
 from empower_core.service import EService
-from empower_core.launcher import srv_or_die
+from empower_core.launcher import srv_or_die, srv
 
 DEBUG = True
 DEFAULT_PORT = 8888
@@ -105,6 +105,15 @@ class BaseHandler(tornado.web.RequestHandler):
 
         return self.get_secure_cookie("username")
 
+    @classmethod
+    def auth_based(cls):
+        """Return true if both account and project managers are available"""
+
+        pmngr = srv("projectsmanager")
+        amngr = srv("accountsmanager")
+
+        return bool(pmngr and amngr)
+
 
 class IndexHandler(BaseHandler):
     """Index page handler."""
@@ -135,18 +144,26 @@ class IndexHandler(BaseHandler):
 
         try:
 
-            username = self.get_secure_cookie("username").decode('UTF-8')
-            accounts_manager = srv_or_die("accountsmanager")
-            account = accounts_manager.accounts[username]
+            if self.auth_based():
 
-            page = "index.html" if not args else "%s.html" % args
+                username = self.get_secure_cookie("username").decode('UTF-8')
+                accounts_manager = srv_or_die("accountsmanager")
+                account = accounts_manager.accounts[username]
 
-            self.render(page,
-                        username=account.username,
-                        password=account.password,
-                        name=account.name,
-                        email=account.email,
-                        project=self.get_project())
+                page = "index.html" if not args else "%s.html" % args
+
+                self.render(page,
+                            username=account.username,
+                            password=account.password,
+                            name=account.name,
+                            email=account.email,
+                            project=self.get_project())
+
+            else:
+
+                page = "index.html" if not args else "%s.html" % args
+
+                self.render(page)
 
         except KeyError as ex:
             self.send_error(404, message=str(ex))
@@ -211,6 +228,10 @@ class AuthLoginHandler(BaseHandler):
     def get(self):
         """Render login page."""
 
+        if not self.auth_based():
+            self.redirect('/')
+            return
+
         if self.get_current_user():
             self.redirect('/')
             return
@@ -252,6 +273,15 @@ class APIHandler(tornado.web.RequestHandler):
     # service associated to this handler
     service = None
 
+    @classmethod
+    def auth_based(cls):
+        """Return true if both account and project managers are available"""
+
+        pmngr = srv("projectsmanager")
+        amngr = srv("accountsmanager")
+
+        return bool(pmngr and amngr)
+
     def write_error(self, status_code, **kwargs):
         """Write error as JSON message."""
 
@@ -275,6 +305,10 @@ class APIHandler(tornado.web.RequestHandler):
 
         self.set_header('Content-Type', 'application/json')
 
+        # no account manager or project manager
+        if not self.auth_based():
+            return
+
         # get requests do not require authentication
         if self.request.method == "GET":
             return
@@ -295,8 +329,7 @@ class APIHandler(tornado.web.RequestHandler):
 
         # account does not exists
         if not accounts_manager.check_permission(username, password):
-            self.send_error(401,
-                            message="Invalid username/password combination")
+            self.send_error(401, message="Invalid username/password")
             return
 
         account = accounts_manager.accounts[username]

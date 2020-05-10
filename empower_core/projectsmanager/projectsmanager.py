@@ -17,10 +17,6 @@
 
 """Projects manager."""
 
-import empower.apps
-
-from empower_core.walkmodule import walk_module
-
 from empower_core.launcher import srv_or_die
 from empower_core.service import EService
 from empower_core.projectsmanager.project import Project
@@ -54,7 +50,7 @@ class ProjectsManager(EService):
     def catalog(self):
         """Return available apps."""
 
-        return walk_module(empower.apps)
+        return dict()
 
     def create(self, desc, project_id, owner):
         """Create new project."""
