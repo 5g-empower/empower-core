@@ -17,6 +17,7 @@
 
 """Projects manager."""
 
+from empower_core.walkmodule import walk_module
 from empower_core.launcher import srv_or_die
 from empower_core.service import EService
 from empower_core.projectsmanager.project import Project
@@ -37,6 +38,24 @@ class ProjectsManager(EService):
 
     projects = {}
 
+    @property
+    def catalog(self):
+        """Return workers_package."""
+
+        return walk_module(self.catalog_packages)
+
+    @property
+    def catalog_packages(self):
+        """Return catalog_packages."""
+
+        return self.params["catalog_packages"]
+
+    @catalog_packages.setter
+    def catalog_packages(self, value):
+        """Set catalog_packages."""
+
+        self.params["catalog_packages"] = value
+
     def start(self):
         """Start projects manager."""
 
@@ -45,12 +64,6 @@ class ProjectsManager(EService):
         for project in self.PROJECT_IMPL.objects.all():
             self.projects[project.project_id] = project
             self.projects[project.project_id].start_services()
-
-    @property
-    def catalog(self):
-        """Return available apps."""
-
-        return dict()
 
     def create(self, desc, project_id, owner):
         """Create new project."""
@@ -115,7 +128,8 @@ class ProjectsManager(EService):
         del self.projects[project_id]
 
 
-def launch(context, service_id):
+def launch(context, service_id, catalog_packages=""):
     """ Initialize the module. """
 
-    return ProjectsManager(context=context, service_id=service_id)
+    return ProjectsManager(context=context, service_id=service_id,
+                           catalog_packages=catalog_packages)

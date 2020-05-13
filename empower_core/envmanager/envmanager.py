@@ -19,6 +19,7 @@
 
 import uuid
 
+from empower_core.walkmodule import walk_module
 from empower_core.service import EService
 from empower_core.envmanager.env import Env
 from empower_core.envmanager.workercallbackshandler import \
@@ -38,6 +39,24 @@ class EnvManager(EService):
 
     env = None
 
+    @property
+    def catalog(self):
+        """Return workers_package."""
+
+        return walk_module(self.catalog_packages)
+
+    @property
+    def catalog_packages(self):
+        """Return catalog_packages."""
+
+        return self.params["catalog_packages"]
+
+    @catalog_packages.setter
+    def catalog_packages(self, value):
+        """Set catalog_packages."""
+
+        self.params["catalog_packages"] = value
+
     def start(self):
         """Start configuration manager."""
 
@@ -49,14 +68,9 @@ class EnvManager(EService):
         self.env = self.ENV_IMPL.objects.first()
         self.env.start_services()
 
-    @property
-    def catalog(self):
-        """Return available workers."""
 
-        return dict()
-
-
-def launch(context, service_id):
+def launch(context, service_id, catalog_packages=""):
     """ Initialize the module. """
 
-    return EnvManager(context=context, service_id=service_id)
+    return EnvManager(context=context, service_id=service_id,
+                      catalog_packages=catalog_packages)

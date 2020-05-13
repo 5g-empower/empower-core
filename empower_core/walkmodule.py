@@ -18,10 +18,13 @@
 """Inspect the specified module for services."""
 
 import pkgutil
+import importlib
 
 
 def walk_module(package):
     """Inspect the specified module for services."""
+
+    package = importlib.import_module(package)
 
     results = {}
 
