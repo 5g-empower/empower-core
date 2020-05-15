@@ -229,6 +229,7 @@ class AuthLoginHandler(BaseHandler):
         """Render login page."""
 
         if not self.auth_based():
+            self.set_secure_cookie("username", "none")
             self.redirect('/')
             return
 
