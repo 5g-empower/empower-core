@@ -30,7 +30,7 @@ class ProjectsHandler(apimanager.APIHandler):
             r"/api/v1/projects/([a-zA-Z0-9-]*)/?"]
 
     @apimanager.validate(min_args=0, max_args=1)
-    def get(self, *args, **kwargs):
+    def get(self, project_id=None):
         """Lists all the projects.
 
         Args:
@@ -62,8 +62,8 @@ class ProjectsHandler(apimanager.APIHandler):
             }
         """
 
-        return self.service.projects \
-            if not args else self.service.projects[uuid.UUID(args[0])]
+        return self.service.projects[uuid.UUID(project_id)] \
+            if project_id else self.service.projects
 
     @apimanager.validate(returncode=201, min_args=0, max_args=1)
     def post(self, *args, **kwargs):
@@ -107,7 +107,7 @@ class ProjectsHandler(apimanager.APIHandler):
         self.service.update(project_id=project_id, desc=kwargs['desc'])
 
     @apimanager.validate(returncode=204, min_args=0, max_args=1)
-    def delete(self, *args, **kwargs):
+    def delete(self, project_id=None):
         """Delete one or all projects.
 
         Args:
@@ -120,7 +120,7 @@ class ProjectsHandler(apimanager.APIHandler):
             DELETE /api/v1/projects/52313ecb-9d00-4b7d-b873-b55d3d9ada26
         """
 
-        if args:
-            self.service.remove(uuid.UUID(args[0]))
+        if project_id:
+            self.service.remove(uuid.UUID(project_id))
         else:
             self.service.remove_all()

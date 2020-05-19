@@ -173,7 +173,6 @@ class EUI64Field(MongoBaseField):
                          mongo_name=mongo_name,
                          **kwargs)
 
-    # TODO check if needed
     @classmethod
     def validate(cls, value):
         """Convert value in id6 format."""

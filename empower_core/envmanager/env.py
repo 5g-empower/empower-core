@@ -55,7 +55,8 @@ class Env(MongoModel):
         # Save pointer to EnvManager
         self.manager = srv_or_die("envmanager")
 
-    def write_points(self, points):
+    @classmethod
+    def write_points(cls, points):
         """Write points to time-series manager."""
 
         ts_manager = srv_or_die("tsmanager")

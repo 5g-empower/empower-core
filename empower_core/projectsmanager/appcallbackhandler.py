@@ -33,7 +33,7 @@ class AppCallbacksHandler(apimanager.APIHandler):
     ]
 
     @apimanager.validate(min_args=2, max_args=3)
-    def get(self, *args, **kwargs):
+    def get(self, project_id, service_id, callback=None):
         """List the callback.
 
         Args:
@@ -64,14 +64,13 @@ class AppCallbacksHandler(apimanager.APIHandler):
             }
         """
 
-        project_id = uuid.UUID(args[0])
+        project_id = uuid.UUID(project_id)
         project = self.service.projects[project_id]
 
-        service_id = uuid.UUID(args[1])
+        service_id = uuid.UUID(service_id)
         service = project.services[service_id]
 
-        return service.callbacks \
-            if len(args) == 2 else service.callbacks[args[2]]
+        return service.callbacks[callback] if callback else service.callbacks
 
     @apimanager.validate(returncode=201, min_args=2, max_args=2)
     def post(self, *args, **kwargs):
@@ -113,7 +112,7 @@ class AppCallbacksHandler(apimanager.APIHandler):
                         (project_id, service_id, kwargs['name']))
 
     @apimanager.validate(returncode=204, min_args=3, max_args=3)
-    def delete(self, *args, **kwargs):
+    def delete(self, project_id, service_id, callback):
         """Stop a worker.
 
         Args:
@@ -127,10 +126,10 @@ class AppCallbacksHandler(apimanager.APIHandler):
             DELETE /api/v1/workers/08e14f40-6ebf-47a0-8baa-11d7f44cc228/default
         """
 
-        project_id = uuid.UUID(args[0])
+        project_id = uuid.UUID(project_id)
         project = self.service.projects[project_id]
 
-        service_id = uuid.UUID(args[1])
+        service_id = uuid.UUID(service_id)
         service = project.services[service_id]
 
-        service.rem_callback(name=args[2])
+        service.rem_callback(callback)

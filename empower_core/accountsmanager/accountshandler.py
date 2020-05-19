@@ -28,7 +28,7 @@ class AccountsHandler(apimanager.APIHandler):
             r"/api/v1/accounts/([a-zA-Z0-9:.]*)/?"]
 
     @apimanager.validate(max_args=1)
-    def get(self, *args, **kwargs):
+    def get(self, username=None):
         """List the accounts.
 
         Args:
@@ -66,11 +66,11 @@ class AccountsHandler(apimanager.APIHandler):
             }
         """
 
-        return self.service.accounts \
-            if not args else self.service.accounts[args[0]]
+        return self.service.accounts[username] \
+            if username else self.service.accounts
 
     @apimanager.validate(returncode=201)
-    def post(self, *args, **kwargs):
+    def post(self, **kwargs):
         """Create a new account.
 
         Request:
@@ -153,7 +153,7 @@ class AccountsHandler(apimanager.APIHandler):
                             email=email)
 
     @apimanager.validate(returncode=204, min_args=1, max_args=1)
-    def delete(self, *args, **kwargs):
+    def delete(self, username):
         """Delete an account.
 
         Args:
@@ -165,4 +165,4 @@ class AccountsHandler(apimanager.APIHandler):
             DELETE /api/v1/accounts/foo
         """
 
-        self.service.remove(args[0])
+        self.service.remove(username)

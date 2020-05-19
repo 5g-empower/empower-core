@@ -17,34 +17,10 @@
 
 """Application."""
 
-from empower_core.service import EService
+from empower_core.appworker import EAppWorker
 
 EVERY = 2000
 
 
-class EApp(EService):
+class EApp(EAppWorker):
     """Base app class."""
-
-    MODULES = []
-
-    def __init__(self, context, **kwargs):
-
-        super().__init__(context=context, **kwargs)
-
-    def start(self):
-        """Start app."""
-
-        for module in self.MODULES:
-            module.register_callbacks(self)
-
-        # start the app
-        super().start()
-
-    def stop(self):
-        """Stop app."""
-
-        for module in self.MODULES:
-            module.unregister_callbacks(self)
-
-        # stop the app
-        super().stop()

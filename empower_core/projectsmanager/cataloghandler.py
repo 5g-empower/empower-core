@@ -28,7 +28,7 @@ class CatalogHandler(apimanager.APIHandler):
             r"/api/v1/projects/catalog/(.*)/?"]
 
     @apimanager.validate(min_args=0, max_args=1)
-    def get(self, *args, **kwargs):
+    def get(self, name=None):
         """List of available applications
 
         Example URLs:
@@ -63,5 +63,4 @@ class CatalogHandler(apimanager.APIHandler):
             }
         """
 
-        return self.service.catalog if not args else \
-            self.service.catalog[args[0]]
+        return self.service.catalog[name] if name else self.service.catalog

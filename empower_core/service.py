@@ -20,10 +20,11 @@
 import uuid
 import logging
 import types
-import requests
-import tornado.ioloop
 
 from urllib.parse import urlparse
+
+import requests
+import tornado.ioloop
 
 from empower_core.imsi import IMSI
 from empower_core.plmnid import PLMNID
@@ -85,11 +86,7 @@ class EService:
             raise ValueError("Invalid paramer: %s" % param)
 
         manifest = self.manifest['params'][param]
-
-        static = False
-
-        if 'static' in manifest:
-            static = manifest['static']
+        static = manifest.get('static', False)
 
         if param in self.params and static:
             raise ValueError("Parameter cannot be modified: %s" % param)
@@ -102,29 +99,24 @@ class EService:
 
         param_type = manifest['type']
 
+        cast_dict = {
+            "str": str,
+            "int": int,
+            "IMSI": IMSI,
+            "PLMNID": PLMNID,
+            "SSID": SSID,
+            "EtherAdress": EtherAddress
+        }
+
         # try to cast value to specified type
         if isinstance(param_type, str):
 
-            if param_type == "str":
-                return str(value)
+            if param_type not in cast_dict:
+                raise ValueError("Invalid value for '%s' expected '%s'" %
+                                 (param, param_type))
 
-            if param_type == "int":
-                return int(value)
-
-            if param_type == "IMSI":
-                return IMSI(value)
-
-            if param_type == "PLMNID":
-                return PLMNID(value)
-
-            if param_type == "SSID":
-                return SSID(value)
-
-            if param_type == "EtherAddress":
-                return EtherAddress(value)
-
-            raise ValueError("Invalid value for '%s' expected '%s'" %
-                             (param, param_type))
+            param_type_class = cast_dict[param_type]
+            return param_type_class(value)
 
         # check if in the list
         if isinstance(param_type, list):

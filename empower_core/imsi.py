@@ -17,8 +17,6 @@
 
 """international mobile subscriber identity (IMSI)."""
 
-import re
-
 from stdnum import numdb
 from stdnum.util import clean, isdigits
 
@@ -123,8 +121,8 @@ class IMSIField(MongoBaseField):
     def __init__(self, verbose_name=None, mongo_name=None, **kwargs):
 
         super(IMSIField, self).__init__(verbose_name=verbose_name,
-                                          mongo_name=mongo_name,
-                                          **kwargs)
+                                        mongo_name=mongo_name,
+                                        **kwargs)
 
         def validate_imsi(value):
 

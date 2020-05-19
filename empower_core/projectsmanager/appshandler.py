@@ -30,7 +30,7 @@ class AppsHandler(apimanager.APIHandler):
             r"/api/v1/projects/([a-zA-Z0-9-]*)/apps/([a-zA-Z0-9-]*)/?"]
 
     @apimanager.validate(min_args=1, max_args=2)
-    def get(self, *args, **kwargs):
+    def get(self, project_id, app_id=None):
         """List the apps.
 
         Args:
@@ -75,11 +75,11 @@ class AppsHandler(apimanager.APIHandler):
             }
         """
 
-        project_id = uuid.UUID(args[0])
+        project_id = uuid.UUID(project_id)
         project = self.service.projects[project_id]
 
-        return project.services \
-            if len(args) == 1 else project.services[uuid.UUID(args[1])]
+        return project.services[uuid.UUID(app_id)] \
+            if app_id else project.services
 
     @apimanager.validate(returncode=201, min_args=1, max_args=2)
     def post(self, *args, **kwargs):
@@ -156,7 +156,7 @@ class AppsHandler(apimanager.APIHandler):
         project.reconfigure_service(service_id, params)
 
     @apimanager.validate(returncode=204, min_args=2, max_args=2)
-    def delete(self, *args, **kwargs):
+    def delete(self, project_id, app_id):
         """Stop an app.
 
         Args:
@@ -170,8 +170,9 @@ class AppsHandler(apimanager.APIHandler):
                 7069c865-8849-4840-9d96-e028663a5dcf
         """
 
-        project_id = uuid.UUID(args[0])
+        project_id = uuid.UUID(project_id)
         project = self.service.projects[project_id]
-        service_id = uuid.UUID(args[1])
 
-        project.unregister_service(service_id)
+        app_id = uuid.UUID(app_id)
+
+        project.unregister_service(app_id)

@@ -20,6 +20,7 @@
 from empower_core.walkmodule import walk_module
 from empower_core.launcher import srv_or_die
 from empower_core.service import EService
+from empower_core.envmanager.envmanager import EnvManager
 from empower_core.projectsmanager.project import Project
 from empower_core.projectsmanager.appcallbackhandler import \
     AppCallbacksHandler
@@ -28,7 +29,7 @@ from empower_core.projectsmanager.appshandler import AppsHandler
 from empower_core.projectsmanager.projectshandler import ProjectsHandler
 
 
-class ProjectsManager(EService):
+class ProjectsManager(EnvManager):
     """Projects manager."""
 
     HANDLERS = [CatalogHandler, AppsHandler, ProjectsHandler,
@@ -37,24 +38,6 @@ class ProjectsManager(EService):
     PROJECT_IMPL = Project
 
     projects = {}
-
-    @property
-    def catalog(self):
-        """Return workers_package."""
-
-        return walk_module(self.catalog_packages)
-
-    @property
-    def catalog_packages(self):
-        """Return catalog_packages."""
-
-        return self.params["catalog_packages"]
-
-    @catalog_packages.setter
-    def catalog_packages(self, value):
-        """Set catalog_packages."""
-
-        self.params["catalog_packages"] = value
 
     def start(self):
         """Start projects manager."""

@@ -30,7 +30,7 @@ class WorkersHandler(apimanager.APIHandler):
             r"/api/v1/workers/([a-zA-Z0-9-]*)/?"]
 
     @apimanager.validate(min_args=0, max_args=1)
-    def get(self, *args, **kwargs):
+    def get(self, worker_id=None):
         """List the workers.
 
         Args:
@@ -65,8 +65,8 @@ class WorkersHandler(apimanager.APIHandler):
             }
         """
 
-        return self.service.env.services \
-            if not args else self.service.env.services[uuid.UUID(args[0])]
+        return self.service.env.services[uuid.UUID(worker_id)] \
+            if worker_id else self.service.env.services
 
     @apimanager.validate(returncode=201, min_args=0, max_args=1)
     def post(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class WorkersHandler(apimanager.APIHandler):
                                              params=params)
 
     @apimanager.validate(returncode=204, min_args=1, max_args=1)
-    def delete(self, *args, **kwargs):
+    def delete(self, worker_id):
         """Stop a worker.
 
         Args:
@@ -149,6 +149,4 @@ class WorkersHandler(apimanager.APIHandler):
             DELETE /api/v1/workers/08e14f40-6ebf-47a0-8baa-11d7f44cc228
         """
 
-        service_id = uuid.UUID(args[0])
-
-        self.service.env.unregister_service(service_id=service_id)
+        self.service.env.unregister_service(service_id=uuid.UUID(worker_id))

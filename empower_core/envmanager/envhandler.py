@@ -27,7 +27,7 @@ class EnvHandler(apimanager.APIHandler):
     URLS = [r"/api/v1/env/?"]
 
     @apimanager.validate(min_args=0, max_args=1)
-    def get(self, *args, **kwargs):
+    def get(self):
         """Get environment
 
         Example URLs:
