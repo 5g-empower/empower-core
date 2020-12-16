@@ -30,7 +30,7 @@ setuptools.setup(
     description="The EmPOWER core library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://5g-empower.io/",
+    url="http://5g-empower.github.io/",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
