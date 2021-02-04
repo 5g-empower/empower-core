@@ -151,6 +151,14 @@ class EService:
 
         return self.context.register_service(name, params=kwargs)
 
+    def Unregister_service(self, service_id):
+        """Unregister a service."""
+
+        if not self.context:
+            return None
+
+        return self.context.unregister_service(service_id)
+
     def handle_callbacks(self, params=None, name="default"):
         """Invoke registered callbacks."""
 
@@ -165,7 +173,7 @@ class EService:
 
         # if type is native just invoke it with the specified params
         if self.callbacks[name]['callback_type'] == CALLBACK_NATIVE:
-            callback(params)
+            callback(argument)
             return
 
         # if type is REST make a post with the serialized params
