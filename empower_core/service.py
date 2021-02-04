@@ -151,7 +151,7 @@ class EService:
 
         return self.context.register_service(name, params=kwargs)
 
-    def Unregister_service(self, service_id):
+    def unregister_service(self, service_id):
         """Unregister a service."""
 
         if not self.context:

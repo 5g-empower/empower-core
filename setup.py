@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="empower-core",
-    version="1.0.8",
+    version="1.0.9",
     author="Roberto Riggio",
     author_email="roberto.riggio@gmail.com",
     description="The EmPOWER core library",
