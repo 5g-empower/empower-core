@@ -171,15 +171,21 @@ class EService:
 
         self.log.info("Handling callback %s (%s)", name, callback_type)
 
-        # if type is native just invoke it with the specified params
-        if self.callbacks[name]['callback_type'] == CALLBACK_NATIVE:
-            callback(argument)
-            return
+        try:
 
-        # if type is REST make a post with the serialized params
-        if self.callbacks[name]['callback_type'] == CALLBACK_REST:
-            response = requests.post(url=callback, json=serialize(argument))
-            self.log.info("POST %s - %u", callback, response.status_code)
+            # if type is native just invoke it with the specified params
+            if self.callbacks[name]['callback_type'] == CALLBACK_NATIVE:
+                callback(argument)
+                return
+
+            # if type is REST make a post with the serialized params
+            if self.callbacks[name]['callback_type'] == CALLBACK_REST:
+                response = requests.post(url=callback,
+                                         json=serialize(argument))
+                self.log.info("POST %s - %u", callback, response.status_code)
+
+        except Exception as ex:
+            self.log.exception(ex)
 
     def add_callback(self, callback, name="default",
                      callback_type=CALLBACK_NATIVE):
