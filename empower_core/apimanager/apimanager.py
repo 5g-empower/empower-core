@@ -33,6 +33,7 @@ from pymodm.errors import ValidationError
 from empower_core.serialize import serialize
 from empower_core.service import EService
 from empower_core.launcher import srv_or_die, srv
+from empower_core.launcher import SERVICES
 
 DEBUG = True
 DEFAULT_PORT = 8888
@@ -481,6 +482,26 @@ class DocHandler(APIHandler):
         self.write('\n'.join(accum))
 
 
+# pylint: disable=W0223
+class ManagersHandler(APIHandler):
+    """Handle managers."""
+
+    URLS = [r"/api/v1/managers/?",
+            r"/api/v1/managers/([a-zA-Z0-9-]*)/?"]
+
+    @classmethod
+    def get(cls, *args):
+        """Get the active managers
+        Args:
+            [0]: the manager name
+        """
+
+        if not args:
+            return list(SERVICES.values())
+
+        return SERVICES[args[0]]
+
+
 class APIManager(EService):
     """Service exposing a REST API
 
@@ -490,7 +511,7 @@ class APIManager(EService):
     """
 
     HANDLERS = [IndexHandler, AuthLoginHandler, AuthLogoutHandler,
-                DocHandler, AuthSwitchProjectHandler]
+                DocHandler, ManagersHandler, AuthSwitchProjectHandler]
 
     def __init__(self, context, service_id, webui, port):
 
