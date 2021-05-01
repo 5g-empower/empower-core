@@ -243,16 +243,14 @@ class EService:
         output = {}
 
         output['service_id'] = self.service_id
-        
-        if self.context:        
-            output['manifest'] = self.manifest
-        
+
         output['name'] = self.name
         output['callbacks'] = self.callbacks
         output['params'] = self.params
 
         if self.context:
             output['project_id'] = self.context.project_id
+            output['manifest'] = self.manifest
 
         return output
 
