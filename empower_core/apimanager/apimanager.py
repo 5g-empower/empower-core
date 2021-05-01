@@ -489,8 +489,8 @@ class ManagersHandler(APIHandler):
     URLS = [r"/api/v1/managers/?",
             r"/api/v1/managers/([a-zA-Z0-9-]*)/?"]
 
-    @classmethod
-    def get(cls, *args):
+    @validate(min_args=0, max_args=1)
+    def get(self, *args):
         """Get the active managers
         Args:
             [0]: the manager name
