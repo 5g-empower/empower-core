@@ -17,9 +17,7 @@
 
 """Projects manager."""
 
-from empower_core.walkmodule import walk_module
 from empower_core.launcher import srv_or_die
-from empower_core.service import EService
 from empower_core.envmanager.envmanager import EnvManager
 from empower_core.projectsmanager.project import Project
 from empower_core.projectsmanager.appcallbackhandler import \

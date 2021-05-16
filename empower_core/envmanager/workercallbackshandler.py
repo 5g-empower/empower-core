@@ -31,7 +31,7 @@ class WorkerCallbacksHandler(apimanager.APIHandler):
 
     @apimanager.validate(min_args=1, max_args=2)
     def get(self, worker_id, callback=None):
-        """List the callback.
+        """List the callbacks.
 
         Args:
 
@@ -100,7 +100,7 @@ class WorkerCallbacksHandler(apimanager.APIHandler):
 
     @apimanager.validate(returncode=204, min_args=2, max_args=2)
     def delete(self, worker_id, callback):
-        """Stop a worker.
+        """Delete a callback.
 
         Args:
 
